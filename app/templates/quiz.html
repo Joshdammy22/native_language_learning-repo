@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">{{ title }}</h1>
+    <form method="POST" action="{{ url_for('take_quiz', quiz_id=quiz.id) }}">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {% for question in form.questions %}
+                <fieldset class="mb-4">
+                    <legend>{{ question.label }}</legend>
+                    {% for choice in question.choices %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="{{ question.name }}" id="choice_{{ choice[0] }}" value="{{ choice[0] }}">
+                            <label class="form-check-label" for="choice_{{ choice[0] }}">
+                                {{ choice[1] }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </fieldset>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+{% endblock %}

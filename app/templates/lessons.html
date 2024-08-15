@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Lessons{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Lessons for {{ course.title }}</h1>
+    <ul class="list-group">
+        {% for lesson in lessons %}
+            <li class="list-group-item">
+                <a href="{{ url_for('lesson', lesson_id=lesson.id) }}">{{ lesson.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

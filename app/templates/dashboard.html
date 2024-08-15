@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Dashboard</h1>
+    <h3>Your Progress</h3>
+    <ul class="list-group">
+        {% for progress in progress %}
+            <li class="list-group-item">
+                Lesson ID: {{ progress.lesson_id }} - Completed: {{ progress.completed }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

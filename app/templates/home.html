@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Native Language Learning{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<header class="bg-primary text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-4">Welcome to Native Language Learning</h1>
+        <p class="lead">Your journey to mastering a new language begins here.</p>
+        <a class="btn btn-light btn-lg" href="{{ url_for('main.courses') }}">Explore Courses</a>
+    </div>
+</header>
+
+<!-- About Section -->
+<section class="container my-5">
+    <div class="row">
+        <div class="col-lg-6">
+            <h2>About Us</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </div>
+        <div class="col-lg-6">
+            <img src="{{ url_for('static', filename='images/about.jpg') }}" class="img-fluid" alt="About Us">
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Why Choose Us?</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Experienced Instructors</h5>
+                        <p class="card-text">Our instructors are native speakers with years of teaching experience.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Interactive Lessons</h5>
+                        <p class="card-text">Engage in interactive lessons that make learning enjoyable and effective.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Flexible Scheduling</h5>
+                        <p class="card-text">Choose from a variety of schedules that fit your personal needs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="bg-primary text-white text-center py-5">
+    <div class="container">
+        <h2 class="display-4">Ready to Start Learning?</h2>
+        <p class="lead">Join us today and take the first step towards mastering a new language.</p>
+        <a class="btn btn-light btn-lg" href="{{ url_for('main.courses') }}">View Courses</a>
+    </div>
+</section>
+{% endblock %}
