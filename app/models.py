@@ -1,6 +1,9 @@
 from datetime import datetime
 from app import db, login_manager
 from flask_login import UserMixin
+from flask_bcrypt import Bcrypt
+
+bcrypt = Bcrypt()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -15,9 +18,22 @@ class Student(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     progress = db.relationship('UserProgress', backref='student', lazy=True)
+    enrollments = db.relationship('Enrollment', backref='student', lazy=True)
+    ratings = db.relationship('Rating', backref='student', lazy=True)
+
+    @property
+    def is_student(self):
+        return True
+
+    @property
+    def is_course_creator(self):
+        return False
 
     def __repr__(self):
         return f"Student('{self.first_name} {self.last_name}', '{self.username}', '{self.email}')"
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)
 
 class CourseCreator(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,7 +42,15 @@ class CourseCreator(UserMixin, db.Model):
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
-    courses = db.relationship('Course', backref='creator', lazy=True)  # Relationship to manage created courses
+    courses = db.relationship('Course', backref='creator', lazy=True)
+
+    @property
+    def is_student(self):
+        return False
+
+    @property
+    def is_course_creator(self):
+        return True
 
     def __repr__(self):
         return f"CourseCreator('{self.first_name} {self.last_name}', '{self.username}', '{self.email}')"
@@ -45,10 +69,10 @@ class Course(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey('language.id'), nullable=False)
-    image_file = db.Column(db.String(20), nullable=True, default='default_course.jpg')  # Optional image
-    video_url = db.Column(db.String(200), nullable=True)  # Optional video URL
+    image_file = db.Column(db.String(20), nullable=True, default='default_course.jpg')
+    video_url = db.Column(db.String(200), nullable=True)
     lessons = db.relationship('Lesson', backref='course', lazy=True)
-    creator_id = db.Column(db.Integer, db.ForeignKey('course_creator.id'), nullable=False)  # Reference to creator
+    creator_id = db.Column(db.Integer, db.ForeignKey('course_creator.id'), nullable=False)
 
     def __repr__(self):
         return f"Course('{self.title}', '{self.language.name}')"
@@ -57,12 +81,33 @@ class Lesson(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    image_file = db.Column(db.String(20), nullable=True, default='default_lesson.jpg')  # Optional image
-    video_url = db.Column(db.String(200), nullable=True)  # Optional video URL
+    image_file = db.Column(db.String(20), nullable=True, default='default_lesson.jpg')
+    video_url = db.Column(db.String(200), nullable=True)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
 
     def __repr__(self):
         return f"Lesson('{self.title}', '{self.course.title}')"
+
+class Enrollment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    date_enrolled = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    completed = db.Column(db.Boolean, default=False)
+
+    def __repr__(self):
+        return f'<Enrollment {self.id}, Student {self.student_id}, Course {self.course_id}>'
+
+class Rating(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    review = db.Column(db.Text, nullable=True)
+    date_rated = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Rating {self.id}, Student {self.student_id}, Course {self.course_id}, Rating {self.rating}>'
 
 class UserProgress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -86,7 +131,7 @@ class Quiz(db.Model):
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question_text = db.Column(db.String(255), nullable=False)
-    choices = db.relationship('Choice', backref='question', lazy=True)
+    choices = db.relationship('Choice', backref='question', lazy=True, foreign_keys='Choice.question_id')
     quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
     correct_choice_id = db.Column(db.Integer, db.ForeignKey('choice.id'), nullable=False)
 

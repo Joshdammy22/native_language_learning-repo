@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}
+Course Creator Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action active">Dashboard</a>
+                <a href="{{ url_for('main.create_course') }}" class="list-group-item list-group-item-action">Create Course</a>
+                <a href="#" class="list-group-item list-group-item-action">Student Progress</a>
+                <a href="#" class="list-group-item list-group-item-action">Feedback</a>
+                <a href="#" class="list-group-item list-group-item-action">Notifications</a>
+            </div>
+        </div>
+
+        <!-- Dashboard Overview -->
+        <div class="col-md-9">
+            <h2>Welcome, {{ current_user.first_name }}</h2>
+            <p>Here's an overview of your courses and activities.</p>
+
+            <!-- Course Statistics -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Courses</h5>
+                            <p class="card-text">{{ total_courses }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Enrollments</h5>
+                            <p class="card-text">{{ total_enrollments }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Average Rating</h5>
+                            <p class="card-text">{{ average_rating }} / 5</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Courses Table -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    Your Courses
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Enrolled Students</th>
+                                <th>Completion Rate</th>
+                                <th>Average Rating</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Loop through courses and display details -->
+                            {% for course in courses %}
+                            <tr>
+                                <td>{{ course.name }}</td>
+                                <td>{{ course.enrollments }}</td>
+                                <td>{{ course.completion_rate }}%</td>
+                                <td>{{ course.rating }} / 5</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-primary">Edit</a>
+                                    <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

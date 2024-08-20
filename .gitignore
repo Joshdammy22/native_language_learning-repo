@@ -43,3 +43,5 @@ Thumbs.db
 coverage.xml
 *.cover
 *.py,cover
+
+Backup

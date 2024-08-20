@@ -60,10 +60,21 @@
 
 <!-- Call to Action -->
 <section class="bg-primary text-white text-center py-5">
-    <div class="container">
-        <h2 class="display-4">Ready to Start Learning?</h2>
-        <p class="lead">Join us today and take the first step towards mastering a new language.</p>
-        <a class="btn btn-light btn-lg" href="{{ url_for('main.courses') }}">View Courses</a>
-    </div>
+    {% if current_user.is_authenticated %}
+        <!-- Content for Logged-In Users -->
+        <div class="container">
+            <p class="lead">Explore new courses and continue your learning journey.</p>
+            <a class="btn btn-light btn-lg" href="{{ url_for('main.courses') }}">View Courses</a>
+        </div>
+    {% else %}
+        <!-- Content for Logged-Out Users -->
+        <div class="container">
+            <h2 class="display-4">Ready to Start Learning?</h2>
+            <p class="lead">Join us today and take the first step towards mastering a new language.</p>
+            <a class="btn btn-light btn-lg" href="{{ url_for('main.courses') }}">View Courses</a>
+        </div>
+    {% endif %}
 </section>
+
+  
 {% endblock %}

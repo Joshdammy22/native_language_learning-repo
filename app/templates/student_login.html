@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Student Login{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-sm-10">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Student Login</h2>
+                    <form method="POST" action="{{ url_for('main.student_login') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control") }}
+                            {% if form.email.errors %}
+                                <div class="form-text text-danger">{{ form.email.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3 position-relative">
+                            {{ form.password.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.password(class="form-control") }}
+                                <span class="input-group-text" id="toggle-student-password">
+                                    <i class="bi bi-eye-slash"></i>
+                                </span>
+                            </div>
+                            {% if form.password.errors %}
+                                <div class="form-text text-danger">{{ form.password.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-block") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('toggle-student-password').addEventListener('click', function () {
+        var passwordField = document.querySelector('input[name="password"]');
+        var icon = this.querySelector('i');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        } else {
+            passwordField.type = 'password';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        }
+    });
+</script>
+{% endblock %}
