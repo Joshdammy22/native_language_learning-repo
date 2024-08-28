@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Native Language Learning{% endblock %}
+
+
+{% block content %}
+<!-- Hero Section -->
+<header class="hero-section text-center text-white d-flex align-items-center" style="
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.5), 
+        rgba(0, 0, 0, 0.5)
+    ), 
+    url('/static/landing.jpg') no-repeat center center;
+    background-size: cover;
+    height: 100vh;
+">
+    <div class="container">
+        <h1 class="display-3">Discover Your Native Tongue</h1>
+        <p class="lead mb-4">Reconnect with your roots and preserve your cultural heritage by mastering your native language.</p>
+        <a class="btn btn-light btn-lg" href="{{ url_for('main.courses') }}">
+            <i class="fas fa-book-reader"></i> Start Learning
+        </a>
+    </div>
+</header>
+
+
+<!-- About Section -->
+<section class="container my-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h2>About Us</h2>
+            <p>We are dedicated to preserving and promoting native languages through immersive learning experiences. Our platform offers comprehensive courses tailored to help you speak, read, and write in your chosen native language.</p>
+        </div>
+        <div class="col-lg-6">
+            <img src="{{ url_for('static', filename='images/about.jpg') }}" class="img-fluid rounded" alt="About Us">
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Why Learn with Us?</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chalkboard-teacher fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Native Instructors</h5>
+                        <p class="card-text">Learn from instructors who are native speakers with deep cultural understanding.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-language fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Comprehensive Curriculum</h5>
+                        <p class="card-text">Our courses cover all aspects of language learning: speaking, listening, reading, and writing.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Community Support</h5>
+                        <p class="card-text">Join a community of learners and native speakers to practice and grow together.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Course Categories Section -->
+<section class="container py-5">
+    <h2 class="text-center mb-4">Explore Language Categories</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-map-signs fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Indigenous Languages</h5>
+                    <p class="card-text">Courses designed to help you learn indigenous languages and connect with native cultures.</p>
+                    <a class="btn btn-outline-primary" href="{{ url_for('main.courses') }}">Learn More</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-globe-americas fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Regional Dialects</h5>
+                    <p class="card-text">Master the regional dialects that are an integral part of your cultural heritage.</p>
+                    <a class="btn btn-outline-primary" href="{{ url_for('main.courses') }}">Learn More</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-book-reader fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Traditional Scripts</h5>
+                    <p class="card-text">Learn to read and write in traditional scripts, preserving ancient languages and texts.</p>
+                    <a class="btn btn-outline-primary" href="{{ url_for('main.courses') }}">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="bg-primary text-white text-center py-5 mb-0">
+    <div class="container">
+        {% if current_user.is_authenticated %}
+            <!-- Content for Logged-In Users -->
+            <p class="lead">Explore new courses and continue your language journey.</p>
+            <a class="btn btn-light btn-lg" href="{{ url_for('main.courses') }}">
+                <i class="fas fa-arrow-circle-right"></i> View Courses
+            </a>
+        {% else %}
+            <!-- Content for Logged-Out Users -->
+            <h2 class="display-4">Ready to Start Learning?</h2>
+            <p class="lead">Join us today and take the first step towards mastering a native language.</p>
+            <a class="btn btn-light btn-lg" href="{{ url_for('main.register_student') }}">
+                <i class="fas fa-user-plus"></i> Join Now
+            </a>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

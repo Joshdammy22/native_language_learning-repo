@@ -2,13 +2,14 @@
 
 {% block title %}Register{% endblock %}
 
+
 {% block content %}
-<div class="container">
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
+        <div class="col-lg-6 col-md-8 col-sm-10">
+            <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title text-center">{{ title }}</h5>
+                    <h2 class="card-title text-center mb-4">Create Your Account</h2>
                     <form method="POST" action="">
                         {{ form.hidden_tag() }}
                         <div class="form-group">
@@ -72,9 +73,7 @@
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
     document.getElementById('togglePassword').addEventListener('click', function () {
         const passwordField = document.getElementById('password');
@@ -91,3 +90,16 @@
     });
 </script>
 {% endblock %}
+
+
+
+
+{% block footer %}
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3" style="margin-top: 130px;">
+<div class="container">
+    <p>&copy; 2024 Native Language Learning. All rights reserved.</p>
+</div>
+</footer>
+
+{% endblock footer %}

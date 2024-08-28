@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Native Language Learning{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+    <h2>Search Results for "{{ query }}"</h2>
+    {% if courses %}
+        <div class="row">
+            {% for course in courses %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="{{ url_for('static', filename='course_images/' ~ course.image_file) }}" class="card-img-top" alt="{{ course.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.title }}</h5>
+                        <p class="card-text text-muted">{{ course.description | truncate(100) }}</p>
+                        <a href="{{ url_for('main.course_detail', course_id=course.id) }}" class="btn btn-primary">View Course</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No courses found for your search query.</p>
+    {% endif %}
+</section>
+{% endblock %}

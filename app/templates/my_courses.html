@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group shadow-sm">
+                <a href="{{ url_for('main.student_dashboard') }}" class="list-group-item list-group-item-action">Dashboard</a>
+                <a href="{{ url_for('students.my_courses') }}" class="list-group-item list-group-item-action active bg-primary text-white">Enrolled Courses</a>
+                <a href="{{ url_for('students.completed_courses') }}" class="list-group-item list-group-item-action">Completed Courses</a>
+                <a href="#" class="list-group-item list-group-item-action">Discussion Forums</a>
+                <a href="#" class="list-group-item list-group-item-action">Resource Center</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    Enrolled Courses
+                </div>
+                <div class="card-body">
+                    {% if courses_with_enrollments %}
+                        {% for enrollment, course in courses_with_enrollments %}
+                            <div class="mb-4 border-bottom pb-3">
+                                <h5 class="text-primary">{{ course.title }}</h5>
+                                <p class="mb-1">Progress: {{ enrollment.progress }}%</p>
+                                {% if enrollment.grade is not none %}
+                                    <p class="mb-1">Grade: {{ enrollment.grade }}</p>
+                                {% else %}
+                                    <p class="mb-1">Grade: Not Assigned</p>
+                                {% endif %}
+                                <small class="text-muted">Status: {% if enrollment.completed %}Completed{% else %}In Progress{% endif %}</small>
+                                <a href="{{ url_for('main.course_learning', course_id=course.id) }}" class="btn btn-outline-primary btn-sm mt-2">
+                                    {% if enrollment.completed %}View Course{% else %}Continue Course{% endif %}
+                                </a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No enrolled courses found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3" style="margin-top: 220px;">
+    <div class="container">
+        <p>&copy; 2024 Native Language Learning. All rights reserved.</p>
+    </div>
+</footer>
+{% endblock footer %}

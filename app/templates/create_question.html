@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Questions to Quiz: {{ quiz.title }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Add Questions to Quiz: {{ quiz.title }}</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group mb-3">
+            {{ form.question_text.label(class="form-label") }}
+            {{ form.question_text(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+    
+    <!-- Optional: List of existing questions for the quiz -->
+    {% if quiz.questions %}
+        <h2 class="mt-5">Existing Questions</h2>
+        <ul>
+        {% for question in quiz.questions %}
+            <li>{{ question.text }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}

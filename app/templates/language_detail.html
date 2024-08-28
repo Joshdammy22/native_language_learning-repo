@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}{{ language.name }} - Native Language Learning{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+    <!-- Language Image and Details -->
+    <div class="row mb-4">
+        <!-- Language Image -->
+        <div class="col-md-4 mb-3 mb-md-0">
+            <img src="{{ url_for('static', filename='images/languages/' ~ language.image_file) }}" class="img-fluid rounded" alt="{{ language.name }}" style="max-width: 100%; height: auto;">
+        </div>
+        <!-- Language Details -->
+        <div class="col-md-8">
+            <div class="text-center text-md-start">
+                <h2 class="display-4">{{ language.name }}</h2>
+                <div class="abstract-content bg-light rounded p-4 shadow-sm">
+                    <p class="lead mb-2"><strong>Demographics:</strong> {{ language.demographics | safe }}</p>
+                    <p class="lead mb-2"><strong>History:</strong> {{ language.history | safe }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    <!-- Sidebar for Courses -->
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Content Here, if needed -->
+        </div>
+        <div class="col-md-4">
+            {% if language.courses %}
+                <div class="sidebar bg-light rounded p-4 shadow-sm">
+                    <h3 class="mb-4">Available Courses</h3>
+                    <div class="list-group">
+                        {% for course in language.courses %}
+                        <a href="{{ url_for('main.course_detail', course_id=course.id) }}" class="list-group-item list-group-item-action">
+                            <h5 class="mb-1">{{ course.title }}</h5>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <p>No courses available for this language.</p>
+            {% endif %}
+            
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Quiz: {{ quiz.title }}</h2>
+    <form id="editQuizForm" action="{{ url_for('main.edit_quiz', quiz_id=quiz.id) }}" method="post">
+        {{ form.hidden_tag() }}  <!-- Include CSRF token -->
+
+        <!-- Quiz Title -->
+        <div class="mb-3">
+            <label for="title" class="form-label">Quiz Title</label>
+            {{ form.title(class="form-control", id="title") }}
+        </div>
+
+        <!-- Dynamic Questions Container -->
+        <div id="questionsContainer">
+            {% for question_form in form.questions %}
+            <div class="card mt-3" id="question_{{ loop.index0 }}">
+                <div class="card-body">
+                    <h5 class="card-title">Question {{ loop.index }}</h5>
+                    
+                    <!-- Question Text -->
+                    <div class="mb-3">
+                        <label for="question_text_{{ loop.index0 }}" class="form-label">Question Text</label>
+                        {{ question_form.text(class="form-control", id="question_text_{{ loop.index0 }}") }}
+                    </div>
+
+                    <!-- Options -->
+                    <div id="optionsContainer_{{ loop.index0 }}">
+                        {% for option_form in question_form.options %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="questions[{{ loop.index0 }}][correctOption]" value="{{ loop.index0 }}" {% if loop.index0 == question_form.correctOption.data %} checked {% endif %} required>
+                            {{ option_form.text(class="form-control d-inline-block w-75", placeholder="Option", id="option_{{ loop.index0 }}_{{ loop.index0 }}") }}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Add Option Button -->
+                    <button type="button" class="btn btn-secondary mt-2" onclick="addOption({{ loop.index0 }})">Add Option</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Buttons -->
+        <button type="submit" class="btn btn-success mt-3">Update Quiz</button>
+    </form>
+</div>
+
+<script>
+    // Function to add a new option
+    function addOption(questionId) {
+        const optionsContainer = document.getElementById(`optionsContainer_${questionId}`);
+        const optionCount = optionsContainer.children.length + 1;
+
+        const newOptionHtml = `
+            <div class="form-check mt-2">
+                <input class="form-check-input" type="radio" name="questions[${questionId}][correctOption]" value="${optionCount}" required>
+                <input type="text" class="form-control d-inline-block w-75" name="questions[${questionId}][options][${optionCount}]" placeholder="Option ${optionCount}" required>
+            </div>
+        `;
+        optionsContainer.insertAdjacentHTML('beforeend', newOptionHtml);
+    }
+</script>
+{% endblock %}

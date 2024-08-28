@@ -3,19 +3,22 @@
 {% block title %}Courses{% endblock %}
 
 {% block content %}
-    <h1 class="mb-4">Courses</h1>
+<div class="container my-5">
+    <h1 class="mb-5 text-center text-info">Courses</h1>
     <div class="row">
         {% for course in courses %}
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <img src="{{ url_for('static', filename='course_images/' ~ course.image_file) }}" class="card-img-top" alt="{{ course.title }}">
+            <div class="col-md-4 d-flex align-items-stretch">
+                <div class="card mb-4 shadow-sm rounded-lg border-0">
+                    <img src="{{ url_for('static', filename='course_images/' ~ course.image_file) }}" class="card-img-top rounded-top" alt="{{ course.title }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ course.title }}</h5>
-                        <p class="card-text">{{ course.description }}</p>
-                        <a href="{{ url_for('main. lesson_list', course_id=course.id) }}" class="btn btn-primary">View Lessons</a>
+                        <h5 class="card-title text-info">{{ course.title }}</h5>
+                        <!-- Render description with formatting -->
+                        <p class="card-text text-muted"> {{ course.description | truncate(100) }}</p>
+                        <a href="{{ url_for('main.lesson_list', course_id=course.id) }}" class="btn btn-outline-info btn-sm w-100">Learn more</a>
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
+</div>
 {% endblock %}

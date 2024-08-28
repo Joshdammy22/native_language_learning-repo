@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Submit Quiz
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>{{ quiz.title }}</h1>
+    <form method="POST" action="{{ url_for('main.submit_quiz', course_id=course_id, lesson_id=lesson_id, quiz_id=quiz.id) }}">
+        {{ form.hidden_tag() }}
+        {% for question in form.questions %}
+            <div class="form-group mb-4">
+                <label class="form-label">{{ question.label }}</label>
+                {{ question(class="form-check-input") }}
+            </div>
+        {% endfor %}
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

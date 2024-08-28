@@ -1,14 +1,134 @@
 {% extends "base.html" %}
 
-{% block title %}Lessons{% endblock %}
+{% block title %}{{ lesson.title }}{% endblock %}
 
 {% block content %}
-    <h1 class="mb-4">Lessons for {{ course.title }}</h1>
-    <ul class="list-group">
-        {% for lesson in lessons %}
-            <li class="list-group-item">
-                <a href="{{ url_for('lesson', lesson_id=lesson.id) }}">{{ lesson.title }}</a>
-            </li>
-        {% endfor %}
-    </ul>
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Lesson Title -->
+            <h1 class="text-info">{{ lesson.title }}</h1>
+
+            <!-- Lesson Objective -->
+            <p class="text-muted">{{ lesson.objective | safe }}</p>
+
+            <!-- Lesson Image -->
+            {% if lesson.image_file %}
+            <div class="card mb-4 shadow-sm">
+                <img src="{{ url_for('static', filename='lesson_images/' ~ lesson.image_file) }}" class="card-img-top" alt="{{ lesson.title }}">
+            </div>
+            {% endif %}
+
+            <!-- Lesson Video -->
+            {% if course.video_url %}
+            <div class="mb-4 video-container" id="videoContainer">
+                <iframe width="100%" height="400px" src="{{ course.video_url | replace('watch?v=', 'embed/') }}" frameborder="0" allowfullscreen></iframe>
+            </div>
+            {% endif %}
+
+            <!-- Lesson Content -->
+            <div id="lessonContent" class="card mb-4 shadow-sm p-4">
+                {{ lesson.content | safe }}
+            </div>
+
+            <!-- Countdown Timer -->
+            <div id="countdownTimer" class="alert alert-warning text-center mb-4">
+                Time remaining: 420 seconds
+            </div>
+
+            <!-- Progress Info -->
+            <div id="progressInfo" class="alert alert-info mt-4" role="alert">
+                Please go through the lesson to mark this lesson as completed.
+            </div>
+
+            <!-- Completion Allowed -->
+            <div id="completionAllowed" class="alert alert-success mt-4" role="alert" style="display: none;">
+                You can now mark this lesson as completed!
+            </div>
+
+            <!-- Mark as Completed Form -->
+            <form id="completeLessonForm" style="display: none;">
+                <button type="submit" class="btn btn-success">Mark Lesson as Completed</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    let timeSpent = 0; // Start timer from 0 on page load
+    const timeLimit = 420; // 7 minutes in seconds
+    let scrolledToBottom = sessionStorage.getItem('scrolledToBottom') === 'true' || false;
+    const lessonContent = document.getElementById('lessonContent');
+    const completeLessonForm = document.getElementById('completeLessonForm');
+    const progressInfo = document.getElementById('progressInfo');
+    const completionAllowed = document.getElementById('completionAllowed');
+    const countdownTimer = document.getElementById('countdownTimer');
+
+    // Reset the timer when the page loads
+    sessionStorage.setItem('timeSpent', 0);
+
+    function updateTimer() {
+        const timeRemaining = Math.max(0, timeLimit - timeSpent);
+        countdownTimer.textContent = `Time remaining: ${timeRemaining} seconds`;
+    }
+
+    progressInfo.style.display = 'block';
+    updateTimer();
+
+    const timer = setInterval(function () {
+        timeSpent += 1;
+        sessionStorage.setItem('timeSpent', timeSpent);
+        updateTimer();
+
+        if (timeSpent >= timeLimit && scrolledToBottom) {
+            allowCompletion();
+            clearInterval(timer);
+        }
+    }, 1000);
+
+    window.addEventListener('scroll', function () {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+            scrolledToBottom = true;
+            sessionStorage.setItem('scrolledToBottom', 'true');
+            if (timeSpent >= timeLimit) {
+                allowCompletion();
+            }
+        }
+    });
+
+    function allowCompletion() {
+        completeLessonForm.style.display = 'block';
+        progressInfo.style.display = 'none';
+        completionAllowed.style.display = 'block';
+    }
+
+    completeLessonForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        fetch('{{ url_for("main.lesson", lesson_id=lesson.id) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                'time_spent': timeSpent,
+                'scrolled_to_bottom': scrolledToBottom
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+                sessionStorage.removeItem('timeSpent');
+                sessionStorage.removeItem('scrolledToBottom');
+                window.location.href = '{{ url_for("main.course_learning", course_id=lesson.course_id) }}';
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+});
+</script>
 {% endblock %}

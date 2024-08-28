@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Lesson
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Lesson Edit Form -->
+        <div class="col-md-8">
+            <h1>Edit Lesson: {{ lesson.title }}</h1>
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="form-group mb-3">
+                    {{ form.title.label(class="form-label") }}
+                    {{ form.title(class="form-control") }}
+                </div>
+                
+                <div class="form-group mb-3">
+                    {{ form.objective.label(class="form-label") }}
+                    <div id="objective-editor" class="form-control" style="height: 150px;"></div>
+                    <input type="hidden" name="objective" id="objective">
+                </div>
+
+                <div class="form-group mb-3">
+                    {{ form.content.label(class="form-label") }}
+                    <div id="content-editor" class="form-control" style="height: 200px;"></div>
+                    <input type="hidden" name="content" id="content">
+                </div>
+
+                <div class="form-group mb-3">
+                    {{ form.image_file.label(class="form-label") }}
+                    {{ form.image_file(class="form-control-file") }}
+                </div>
+
+                <div class="form-group mb-3">
+                    {{ form.video_url.label(class="form-label") }}
+                    {{ form.video_url(class="form-control") }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+
+            <!-- Link to Quiz Creation Page -->
+            <div class="mt-4">
+                <a href="{{ url_for('main.create_quiz', course_id=course.id, lesson_id=lesson.id) }}" class="btn btn-secondary">
+                    Create Quiz for this Lesson
+                </a>
+            </div>
+        </div>
+
+        <!-- Sidebar for Quizzes -->
+        <div class="col-md-4">
+            <h3>Quizzes for {{ lesson.title }}</h3>
+            <ul class="list-group">
+                {% for quiz in quizzes %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('main.view_quiz', quiz_id=quiz.id) }}">{{ quiz.title }}</a>
+                </li>
+                {% else %}
+                <li class="list-group-item">No quizzes available for this lesson.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Include Quill Stylesheet and JS -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+    // Initialize Quill editors for objective and content
+    var objectiveQuill = new Quill('#objective-editor', {
+        theme: 'snow'
+    });
+    var contentQuill = new Quill('#content-editor', {
+        theme: 'snow'
+    });
+
+    // Load existing content into Quill editors
+    objectiveQuill.root.innerHTML = "{{ form.objective.data|safe }}";
+    contentQuill.root.innerHTML = "{{ form.content.data|safe }}";
+
+    // Handle form submission
+    document.querySelector('form').onsubmit = function() {
+        document.getElementById('objective').value = objectiveQuill.root.innerHTML;
+        document.getElementById('content').value = contentQuill.root.innerHTML;
+    };
+</script>
+{% endblock %}

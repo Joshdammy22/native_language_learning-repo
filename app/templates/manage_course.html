@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Course{% endblock %}
+
+{% block content %}
+    <div class="container my-4">
+        <h1>Manage Course</h1>
+
+        <!-- Display Course Details -->
+        <div class="card mb-4">
+            <div class="card-header">
+                {{ course.title }}
+                <div class="float-end">
+                    <a href="{{ url_for('main.edit_course', course_id=course.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="{{ url_for('main.delete_course', course_id=course.id) }}" method="POST" class="delete-course-form" style="display:inline;">
+                        {{ form.hidden_tag() }}
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Course Image -->
+                    <div class="col-md-4">
+                        <img src="{{ url_for('static', filename='course_images/' + course.image_file) }}" alt="{{ course.title }}" class="img-fluid">
+                    </div>
+                    <!-- Course Information -->
+                    <div class="col-md-8">
+                        <p><strong>Description:</strong> {{ course.description | safe }}</p>
+                        <p><strong>Language:</strong> {{ course.language.name }}</p>
+                        <p><strong>Date Created:</strong> {{ course.date_created.strftime('%Y-%m-%d') if course.date_created else 'N/A' }}</p>
+                        <p><strong>Video URL:</strong> <a href="{{ course.video_url }}">{{ course.video_url }}</a></p>
+
+                       
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to handle form submission -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteForms = document.querySelectorAll('form.delete-course-form');
+
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': formData.get('csrf_token'), // Use the CSRF token from the form
+                    },
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Handle success (e.g., redirect or update the UI)
+                        window.location.href = data.redirect_url;
+                    } else {
+                        // Handle error (e.g., display an error message)
+                        alert('Error deleting course.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred.');
+                });
+            });
+        });
+    });
+    </script>
+{% endblock %}

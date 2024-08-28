@@ -14,3 +14,5 @@ class Config:
     MAIL_PASSWORD = os.environ.get('EMAIL_PASS')
     CACHE_TYPE = 'simple'
     CORS_HEADERS = 'Content-Type'
+    UPLOAD_FOLDER = 'static/course_images'
+    ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}

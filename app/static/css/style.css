@@ -1,0 +1,140 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    color: #212529;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Navbar */
+.navbar {
+    z-index: 1050; /* Ensure navbar has higher z-index */
+    position: relative;
+}
+
+/* Navbar dark background */
+.navbar-dark {
+    background-color: #1a1a2e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand,
+.nav-link {
+    color: #f4f6f8 !important;
+    transition: color 0.3s;
+}
+
+.navbar-brand:hover,
+.nav-link:hover {
+    color: #e94560 !important;
+}
+
+/* Dropdown menu */
+.navbar-nav .dropdown-menu {
+    background-color: #1a1a2e;
+    border: none;
+    z-index: 1060; /* Ensure dropdown is above other content */
+}
+
+.dropdown-item {
+    color: #f4f6f8;
+    transition: background-color 0.3s;
+}
+
+.dropdown-item:hover {
+    background-color: #e94560;
+}
+
+/* Footer */
+footer.bg-dark {
+    background-color: #1a1a2e;
+    color: #f4f6f8;
+}
+
+footer a {
+    color: #f4f6f8;
+}
+
+footer a:hover {
+    color: #e94560;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #ffffff;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #ffffff;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+/* Loading Spinner */
+#loading-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 1050;
+    display: none;
+}
+
+#loading-spinner .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    color: #007bff;
+}
+
+/* Animations */
+.nav-link,
+.dropdown-item,
+.btn {
+    transition: all 0.3s ease-in-out;
+}
+
+.alert-container {
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+/* Ensure the form and other elements do not clip the dropdown */
+.container, .row, .col-md-6 {
+    overflow: visible;
+}
+.custom-textarea {
+    height: 300px; /* Adjust the height as needed */
+}
+.textarea1 {
+    height: 150px; /* Adjust the height as needed */
+    padding: 10px; /* Padding inside the textarea */
+    vertical-align: top; /* This is often used with inline elements, so it's optional here */
+    text-align: left; /* Ensures text aligns to the left */
+    line-height: normal; /* Default line-height */
+    overflow-y: auto; /* Ensures scrolling is available */
+    resize: vertical; /* Allows vertical resizing */
+    box-sizing: border-box; /* Ensures padding is included in the element's total width and height */
+}
+
+.textarea {
+    padding-top: 0; /* Ensure no extra padding at the top */
+    height: 50px;
+}
+
+

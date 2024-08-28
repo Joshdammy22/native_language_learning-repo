@@ -1,0 +1,16 @@
+<!-- lesson_count.html -->
+
+{% extends "base.html" %}
+{% block content %}
+    <h2>How many lessons will the course have?</h2>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.lesson_count.label(class="form-label") }}
+            {{ form.lesson_count(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+{% endblock %}

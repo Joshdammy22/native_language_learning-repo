@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container mt-4 mb-4">
+        <h1 class="mb-4">Add Lesson {{ lesson_index }} to {{ course.title }}</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.title.label(class="form-label") }}
+                        {{ form.title(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.objective.label(class="form-label") }}
+                        <div id="objective-editor" class="form-control" style="height: 200px;"></div>
+                        <input type="hidden" name="objective" id="objective">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.content.label(class="form-label") }}
+                        <div id="content-editor" class="form-control" style="height: 200px;"></div>
+                        <input type="hidden" name="content" id="content">
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.image_file.label(class="form-label") }}
+                        {{ form.image_file(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.video_url.label(class="form-label") }}
+                        {{ form.video_url(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Save Lesson {{ lesson_index }}</button>
+        </form>
+    </div>
+
+    <!-- Include Quill Stylesheet and JS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <script>
+        // Initialize Quill editors
+        var objectiveQuill = new Quill('#objective-editor', {
+            theme: 'snow'
+        });
+        
+        var contentQuill = new Quill('#content-editor', {
+            theme: 'snow'
+        });
+
+        // Handle form submission
+        document.querySelector('form').onsubmit = function() {
+            var objective = document.querySelector('#objective-editor .ql-editor').innerHTML;
+            var content = document.querySelector('#content-editor .ql-editor').innerHTML;
+            document.getElementById('objective').value = objective;
+            document.getElementById('content').value = content;
+        };
+    </script>
+{% endblock %}
+
+{% block footer %}
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3" style="margin-top: 100px;">
+    <div class="container">
+        <p>&copy; 2024 Native Language Learning. All rights reserved.</p>
+    </div>
+</footer>
+{% endblock %}

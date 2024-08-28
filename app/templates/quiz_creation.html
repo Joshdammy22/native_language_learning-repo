@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Create Quiz</h2>
+    <form id="quizForm" action="{{ url_for('main.create_quiz', course_id=course_id, lesson_id=lesson_id) }}" method="post">
+        {{ form.hidden_tag() }}  <!-- Include CSRF token -->
+
+        <!-- Quiz Title -->
+        <div class="mb-3">
+            <label for="quizTitle" class="form-label">Quiz Title</label>
+            <input type="text" class="form-control" id="quizTitle" name="title" required>
+        </div>
+
+        <!-- Dynamic Questions Container -->
+        <div id="questionsContainer">
+            <!-- Initial question block will be added by JavaScript -->
+        </div>
+
+        <!-- Buttons -->
+        <button type="button" class="btn btn-primary mt-3" id="addQuestionBtn">Add Another Question</button>
+        <button type="submit" class="btn btn-success mt-3">Submit Quiz</button>
+    </form>
+</div>
+
+<script>
+    let questionCount = 0;
+
+    // Function to add a new question block
+    function addQuestion() {
+        questionCount++;
+        const questionHtml = `
+            <div class="card mt-3" id="question-${questionCount}">
+                <div class="card-body">
+                    <h5 class="card-title">Question ${questionCount}</h5>
+                    <div class="mb-3">
+                        <label for="questionText-${questionCount}" class="form-label">Question Text</label>
+                        <input type="text" class="form-control" id="questionText-${questionCount}" name="questions[${questionCount}][text]" required>
+                    </div>
+                    <div id="optionsContainer-${questionCount}">
+                        <!-- Options will be appended here -->
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="addOption(${questionCount})">Add Option</button>
+                </div>
+            </div>
+        `;
+        document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', questionHtml);
+        addOption(questionCount);  // Add the first option by default
+    }
+
+    // Function to add a new option block
+    function addOption(questionId) {
+        const optionId = document.querySelectorAll(`#question-${questionId} .option`).length + 1;
+        const optionHtml = `
+            <div class="form-check mt-2 option">
+                <input class="form-check-input" type="radio" name="questions[${questionId}][correctOption]" value="${optionId}" required>
+                <input type="text" class="form-control d-inline-block w-75" name="questions[${questionId}][options][${optionId}]" placeholder="Option ${optionId}" required>
+            </div>
+        `;
+        document.getElementById(`optionsContainer-${questionId}`).insertAdjacentHTML('beforeend', optionHtml);
+    }
+
+    // Add the first question when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        addQuestion();
+    });
+
+    // Handle Add Another Question button click
+    document.getElementById('addQuestionBtn').addEventListener('click', addQuestion);
+
+    // Handle form submission with AJAX
+    document.getElementById('quizForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(this);
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'  // Ensures that Flask can identify the request as AJAX
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect_url;  // Redirect to the provided URL
+            } else {
+                alert('An error occurred. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An unexpected error occurred.');
+        });
+    });
+</script>
+{% endblock %}

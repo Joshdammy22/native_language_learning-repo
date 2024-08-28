@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+View Quiz
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>View Quiz: {{ quiz.title }}</h1>
+
+    <div class="card">
+        <div class="card-body">
+            {% for question in quiz.questions %}
+                <div class="mb-4">
+                    <h5>{{ question.question_text }}</h5>
+                    <ul class="list-group">
+                        {% for choice in question.choices %}
+                            <li class="list-group-item {{ 'list-group-item-primary' if choice.id == question.correct_choice_id else '' }}">
+                                {{ choice.choice_text }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

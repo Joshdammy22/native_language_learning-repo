@@ -4,77 +4,70 @@
 
 {% block content %}
 <!-- Hero Section -->
-<header class="bg-primary text-white text-center py-5">
+<header class="hero-section text-center text-white d-flex align-items-center" style="
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.5), 
+        rgba(0, 0, 0, 0.5)
+    ), 
+    url('/static/home.jpg') no-repeat center center;
+    background-size: cover;
+    height: 100vh;
+">
     <div class="container">
-        <h1 class="display-4">Welcome to Native Language Learning</h1>
-        <p class="lead">Your journey to mastering a new language begins here.</p>
-        <a class="btn btn-light btn-lg" href="{{ url_for('main.courses') }}">Explore Courses</a>
+        <p class="lead mb-4">Explore new courses and continue your learning journey.</p>
+        <!-- Search Bar -->
+        <form class="d-flex justify-content-center mt-4" action="{{ url_for('main.search_courses') }}" method="GET">
+            <input class="form-control form-control-lg search-bar me-2" type="search" placeholder="Search for courses..." aria-label="Search" name="q">
+            <button class="btn btn-light btn-lg" type="submit">Search</button>
+        </form>
     </div>
+
 </header>
 
-<!-- About Section -->
+
+
+
+
+<!-- Find Courses by Language Section -->
 <section class="container my-5">
+    <h2 class="text-center mb-4">Find Courses on Various Languages</h2>
     <div class="row">
-        <div class="col-lg-6">
-            <h2>About Us</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        {% for language in languages %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <img src="{{ url_for('static', filename='images/languages/' ~ language.image_file) }}" class="card-img-top" alt="{{ language.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ language.name }}</h5>
+                    <p class="card-text">{{ language.demographics[:100] | safe }}...</p>
+                    <a href="{{ url_for('main.language_detail', language_id=language.id) }}" class="btn btn-primary">Learn More</a>
+                </div>
+            </div>
         </div>
-        <div class="col-lg-6">
-            <img src="{{ url_for('static', filename='images/about.jpg') }}" class="img-fluid" alt="About Us">
-        </div>
+        {% endfor %}
     </div>
 </section>
 
-<!-- Features Section -->
-<section class="bg-light py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">Why Choose Us?</h2>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Experienced Instructors</h5>
-                        <p class="card-text">Our instructors are native speakers with years of teaching experience.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Interactive Lessons</h5>
-                        <p class="card-text">Engage in interactive lessons that make learning enjoyable and effective.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Flexible Scheduling</h5>
-                        <p class="card-text">Choose from a variety of schedules that fit your personal needs.</p>
-                    </div>
+{% if featured_courses %}
+<!-- Featured Courses Section -->
+<section class="container my-5">
+    <h2 class="text-center mb-4">Featured Courses</h2>
+    <div class="row">
+        {% for course in featured_courses %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <img src="{{ url_for('static', filename='course_images/' + course.image_file) }}" alt="{{ course.title }}" class="img-fluid">
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description[:100] | safe  }}...</p>
+                    <a href="{{ url_for('main.course_detail', course_id=course.id) }}" class="btn btn-primary">View Course</a>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
 </section>
 
-<!-- Call to Action -->
-<section class="bg-primary text-white text-center py-5">
-    {% if current_user.is_authenticated %}
-        <!-- Content for Logged-In Users -->
-        <div class="container">
-            <p class="lead">Explore new courses and continue your learning journey.</p>
-            <a class="btn btn-light btn-lg" href="{{ url_for('main.courses') }}">View Courses</a>
-        </div>
-    {% else %}
-        <!-- Content for Logged-Out Users -->
-        <div class="container">
-            <h2 class="display-4">Ready to Start Learning?</h2>
-            <p class="lead">Join us today and take the first step towards mastering a new language.</p>
-            <a class="btn btn-light btn-lg" href="{{ url_for('main.courses') }}">View Courses</a>
-        </div>
-    {% endif %}
-</section>
+{% endif %}
 
-  
+
 {% endblock %}

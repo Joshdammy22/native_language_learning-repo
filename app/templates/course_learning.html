@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8">
+
+            <!-- Course Progress -->
+            <div class="container mt-4">
+                <h4>Course Progress</h4>
+                <div class="progress">
+                    <div class="progress-bar bg-info" role="progressbar" style="width: {{ progress_percentage }}%;" aria-valuenow="{{ progress_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ progress_percentage }}%
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Title -->
+            <h1 class="text-info mt-4">{{ course.title }}</h1>
+
+            <!-- Course Language -->
+            <p class="text-muted">Language: {{ course.language.name }}</p>
+
+            <!-- Course Image -->
+            <div class="card mb-4 shadow-sm">
+                <img src="{{ url_for('static', filename='course_images/' ~ course.image_file) }}" class="card-img-top" alt="{{ course.title }}">
+            </div>
+
+            
+        
+
+            {% if course.lessons %}
+                <!-- Lessons -->
+            <h3 class="mt-4">Lessons</h3>
+            <ul class="list-group">
+                {% for lesson in course.lessons %}
+                    <li class="list-group-item">
+                        <a href="{{ url_for('main.lesson', lesson_id=lesson.id) }}">{{ lesson.title }}</a>
+                        {% if lesson.completed %}
+                            <span class="badge bg-success">Completed</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Not Completed</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+
+            </ul>
+            
+            {% endif %}
+            
+            {% if notes %}
+                <!-- Notes -->
+            <div class="mt-4">
+                <h4>Notes</h4>
+                {% if notes %}
+                    <ul class="list-group">
+                        {% for note in notes %}
+                            <li class="list-group-item">{{ note.content }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No notes available for this course.</p>
+                {% endif %}
+            {% endif %}
+            
+            </div>
+        </div>
+
+        <!-- Course Creator Information -->
+        <div class="col-lg-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Course Creator</h5>
+                    <p class="card-text">{{ course.creator.first_name }} {{ course.creator.last_name }}</p>
+                    {% if course.date_created %}
+                        <p class="card-text"><small class="text-muted">Created on: {{ course.date_created.strftime('%B %d, %Y') }}</small></p>
+                    {% else %}
+                        <p class="card-text"><small class="text-muted">Created on: N/A</small></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    /* Base Styles for Desktop */
+    .card-img-top {
+        max-height: 400px; /* Adjust the height for larger screens */
+        object-fit: contain; /* Ensure the image covers the card without stretching */
+        width: 100%; /* Make the image responsive */
+    }
+
+    /* Media Queries for Mobile Screens */
+    @media (max-width: 767.98px) {
+        .card-img-top {
+            max-height: 250px; /* Reduce the height for smaller screens */
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .card-img-top {
+            max-height: 200px; /* Further reduce the height for extra-small screens */
+        }
+    }
+
+    /* Optional: Ensure that iframe elements are responsive */
+    iframe {
+        max-width: 100%;
+        height: auto;
+    }
+</style>
+
+{% endblock %}

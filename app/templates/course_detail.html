@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Course Title and Language -->
+        <div class="col-12">
+            <h1 class="text-info" id="courseTitle">{{ course.title }}</h1>
+            <p class="text-muted" id="courseLanguage">Language: {{ course.language.name }}</p>
+        </div>
+
+        <!-- Course Image -->
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <img src="{{ url_for('static', filename='course_images/' ~ course.image_file) }}" class="img-fluid mb-3" alt="{{ course.title }}" id="courseImage">
+        </div>
+
+        <!-- Course Description and Other Content -->
+        <div class="col-lg-8 col-md-8 col-sm-12">
+            <p id="courseDescription">{{ course.description | safe }}</p> <!-- CKEditor formatted content -->
+
+            {% if course.video_url %}
+            <div class="mb-4 video-container" id="videoContainer">
+                <iframe width="100%" height="400px" src="{{ course.video_url | replace('watch?v=', 'embed/') }}" frameborder="0" allowfullscreen></iframe>
+            </div>
+            {% endif %}
+
+            {% if course.lessons %}
+            <h3 class="mt-4" id="lessonsTitle">Lessons</h3>
+            <ul class="list-group" id="lessonsList">
+                {% for lesson in course.lessons %}
+                    <li class="list-group-item">
+                        {{ lesson.title }}
+                    </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <!-- Enrollment and Creator Information -->
+        <div class="col-lg-12 mt-4">
+            <div class="card mb-4 shadow-sm" id="courseCreatorCard">
+                <div class="card-body">
+                    <h5 class="card-title" id="courseCreatorTitle">Course Creator</h5>
+                    <p class="card-text" id="courseCreatorName">{{ course.creator.first_name }} {{ course.creator.last_name }}</p>
+                    {% if course.date_created %}
+                        <p class="card-text"><small class="text-muted" id="courseDateCreated">Created on: {{ course.date_created.strftime('%B %d, %Y') }}</small></p>
+                    {% else %}
+                        <p class="card-text"><small class="text-muted" id="courseDateCreated">Created on: N/A</small></p>
+                    {% endif %}
+                    
+                    {% if current_user.is_authenticated and is_student %}
+                        {% if not enrolled %}
+                            <form id="enrollForm" action="{{ url_for('main.course_detail', course_id=course.id) }}" method="POST">
+                                {{ form.hidden_tag() }} <!-- This will include the CSRF token -->
+                                <button id="enrollBtn" type="submit" class="btn btn-primary btn-block">Enroll</button>
+                            </form>
+                        {% else %}
+                            <button id="goToCourseBtn" type="button" class="btn btn-success btn-block" onclick="window.location.href='{{ url_for('main.course_learning', course_id=course.id) }}'">Go to Course</button>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Popup Modal -->
+<div id="popupModal" class="modal">
+    <div class="modal-content">
+        <div class="thumbs-up">
+            👍
+        </div>
+        <span id="modalText"></span>
+        <div class="modal-actions">
+            <button id="startLearningBtn" class="btn btn-primary">Start Learning</button>
+            <button id="stayHereBtn" class="btn btn-secondary">Stay Here</button>
+        </div>
+    </div>
+</div>
+
+<!-- Styles for Modal and Layout -->
+<style>
+    .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1000; 
+        left: 0; 
+        top: 0; 
+        width: 100%; 
+        height: 100%; 
+        overflow: auto; 
+        background-color: rgba(0, 0, 0, 0.5); 
+        animation: fadeIn 0.5s; /* Fade in animation */
+    }
+
+    .modal-content {
+        background-color: white;
+        margin: 10% auto;
+        padding: 30px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 600px;
+        text-align: center;
+        animation: scaleUp 0.5s ease-out; /* Scale up animation */
+    }
+
+    .thumbs-up {
+        font-size: 50px;
+        margin-bottom: 20px;
+        animation: bounce 1.5s infinite; /* Bounce animation */
+    }
+
+    .modal-actions {
+        margin-top: 20px;
+    }
+
+    .modal-actions button {
+        margin: 5px;
+    }
+
+    body.modal-open {
+        overflow: hidden; 
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+
+    @keyframes scaleUp {
+        from {transform: scale(0.8);}
+        to {transform: scale(1);}
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-20px);
+        }
+        60% {
+            transform: translateY(-10px);
+        }
+    }
+
+    /* Media Query for Mobile View */
+    @media (max-width: 767.98px) {
+        .row {
+            flex-direction: column;
+        }
+
+        #courseTitle {
+            order: 1;
+        }
+        
+        #courseLanguage {
+            order: 2;
+        }
+
+        #courseImage {
+            order: 3;
+            width: 100%;
+            height: auto;
+        }
+
+        #courseDescription, #videoContainer, #lessonsTitle, #lessonsList {
+            order: 4;
+        }
+
+        #courseCreatorCard {
+            order: 5;
+            margin-top: 20px;
+        }
+
+        #videoContainer iframe {
+            height: 150px; /* Adjust height for mobile view */
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('enrollForm').onsubmit = function(event) {
+        event.preventDefault(); 
+
+        fetch(this.action, {
+            method: this.method,
+            body: new FormData(this),
+        }).then(response => {
+            if (response.ok) {
+                document.getElementById('enrollBtn').style.display = 'none';
+                document.getElementById('goToCourseBtn').style.display = 'block';
+                
+                document.getElementById('modalText').textContent = "You have successfully enrolled in the course!";
+                document.getElementById('popupModal').style.display = "block";
+                document.body.classList.add("modal-open");
+
+                document.getElementById('startLearningBtn').onclick = function() {
+                    window.location.href = "{{ url_for('main.course_learning', course_id=course.id) }}";
+                };
+
+                document.getElementById('stayHereBtn').onclick = function() {
+                    document.getElementById('popupModal').style.display = "none";
+                    document.body.classList.remove("modal-open");
+                };
+            } else {
+                alert('An error occurred. Please try again.');
+            }
+        }).catch(error => console.error('Error:', error));
+    };
+});
+</script>
+{% endblock %}

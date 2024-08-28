@@ -1,15 +1,79 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard{% endblock %}
-
 {% block content %}
-    <h1 class="mb-4">Dashboard</h1>
-    <h3>Your Progress</h3>
-    <ul class="list-group">
-        {% for progress in progress %}
-            <li class="list-group-item">
-                Lesson ID: {{ progress.lesson_id }} - Completed: {{ progress.completed }}
-            </li>
-        {% endfor %}
-    </ul>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group shadow-sm">
+                <a href="{{ url_for('main.student_dashboard') }}" class="list-group-item list-group-item-action active bg-primary text-white">Dashboard</a>
+                <a href="{{ url_for('students.my_courses') }}" class="list-group-item list-group-item-action">Enrolled Courses</a>
+                <a href="{{ url_for('students.completed_courses') }}" class="list-group-item list-group-item-action">Completed Courses</a>
+                <a href="#" class="list-group-item list-group-item-action">Discussion Forums</a>
+                <a href="#" class="list-group-item list-group-item-action">Resource Center</a>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <div class="col-md-9">
+            <!-- Welcome Message -->
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-body bg-light">
+                    <h2 class="card-title text-primary">Welcome, {{ current_user.first_name }}!</h2>
+                </div>
+            </div>
+            
+            <!-- Performance Overview -->
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    Performance Overview
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                       
+                        <div class="col-sm-4 text-center">
+                            <p><strong>Completed Courses:</strong></p>
+                            <p class="display-4 text-primary">{{ completed_courses }}</p>
+                        </div>
+                        <div class="col-sm-4 text-center">
+                            <p><strong>Current Progress:</strong></p>
+                            <p class="display-4 text-primary">
+                                {% if current_progress is not none %}
+                                    {{ (current_progress * 100) | round(2) }}%
+                                {% else %}
+                                    Data not available
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enrolled Courses -->
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    Enrolled Courses
+                </div>
+                <div class="card-body">
+                    {% if enrolled_courses %}
+                        {% for course in enrolled_courses %}
+                            <div class="mb-4 border-bottom pb-3">
+                                <h5 class="text-primary">{{ course.title }}</h5>
+                                {% if course.id in course_progress %}
+                                    <p>Progress: {{ course_progress[course.id].completed }} / {{ course_progress[course.id].total }}</p>
+                                {% else %}
+                                    <p>Progress: Not available</p>
+                                {% endif %}
+                                <a href="{{ url_for('main.course_learning', course_id=course.id) }}" class="btn btn-outline-primary btn-sm">Continue Course</a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No enrolled courses found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
